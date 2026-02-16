@@ -1,0 +1,76 @@
+{% extends 'delservice_app/base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2">{{ title }}</h1>
+    <a href="{% url 'delservice_app:product_list' %}" class="btn btn-secondary">
+        ← Назад к списку товаров
+    </a>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header bg-light">
+        <h5 class="mb-0">Форма товара</h5>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            
+            {% if form.errors %}
+            <div class="alert alert-danger">
+                <strong>Ошибка:</strong> Проверьте правильность заполнения формы
+            </div>
+            {% endif %}
+            
+            <div class="row g-3">
+                <!-- Название -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="id_name" class="form-label">Название</label>
+                        {{ form.name }}
+                    </div>
+                </div>
+                
+                <!-- Описание -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="id_description" class="form-label">Описание</label>
+                        {{ form.description }}
+                    </div>
+                </div>
+                
+                <!-- Цена -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="id_price" class="form-label">Цена (₽)</label>
+                        {{ form.price }}
+                    </div>
+                </div>
+                
+                <!-- Вес -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="id_weight_kg" class="form-label">Вес (кг)</label>
+                        {{ form.weight_kg }}
+                    </div>
+                </div>
+                
+                <!-- Габариты -->
+                <div class="col-12">
+                    <div class="mb-3">
+                        <label for="id_dimensions_cm" class="form-label">Габариты (см)</label>
+                        {{ form.dimensions_cm }}
+                        <small class="form-text text-muted">Формат: Д×Ш×В</small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary">Сохранить</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,164 @@
+{% extends 'delservice_app/base.html' %}
+
+{% block title %}Отчеты{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2">📊 Отчеты</h1>
+    <a href="{% url 'delservice_app:generate_pdf_report' %}" class="btn btn-primary">
+        📄 Скачать в PDF
+    </a>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">Эффективность курьеров (за 30 дней)</h5>
+            </div>
+            <div class="card-body">
+                {% if courier_stats %}
+                <table class="table table-bordered table-sm">
+                    <thead>
+                        <tr>
+                            <th>Курьер</th>
+                            <th>Доставок</th>
+                            <th>Доход (₽)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for courier in courier_stats %}
+                        <tr>
+                            <td>{{ courier.full_name }}</td>
+                            <td>{{ courier.total_deliveries }}</td>
+                            <td>{{ courier.total_earnings|default:"0" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p class="text-muted">Нет данных за последний месяц</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">Статистика по статусам</h5>
+            </div>
+            <div class="card-body">
+                {% if status_stats %}
+                <div class="mb-3">
+                    <canvas id="statusChart" width="400" height="200"></canvas>
+                </div>
+                <table class="table table-bordered table-sm">
+                    <thead>
+                        <tr>
+                            <th>Статус</th>
+                            <th>Количество</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for status in status_stats %}
+                        <tr>
+                            <td>{{ status.name }}</td>
+                            <td>{{ status.order_count }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p class="text-muted">Нет данных</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">Доходы по способам оплаты</h5>
+            </div>
+            <div class="card-body">
+                {% if payment_stats %}
+                <div class="mb-3">
+                    <canvas id="paymentChart" width="400" height="200"></canvas>
+                </div>
+                <table class="table table-bordered table-sm">
+                    <thead>
+                        <tr>
+                            <th>Способ оплаты</th>
+                            <th>Сумма (₽)</th>
+                            <th>Количество</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for payment in payment_stats %}
+                        <tr>
+                            <td>{{ payment.name }}</td>
+                            <td>{{ payment.total_amount|default:"0" }}</td>
+                            <td>{{ payment.payment_count }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p class="text-muted">Нет данных</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // График по статусам
+        const statusCtx = document.getElementById('statusChart').getContext('2d');
+        new Chart(statusCtx, {
+            type: 'bar',
+            data: {
+                labels: [{% for status in status_stats %}"{{ status.name }}",{% endfor %}],
+                datasets: [{
+                    label: 'Количество заказов',
+                    data: [{% for status in status_stats %}{{ status.order_count }},{% endfor %}],
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+
+        // График по способам оплаты
+        const paymentCtx = document.getElementById('paymentChart').getContext('2d');
+        new Chart(paymentCtx, {
+            type: 'pie',
+            data: {
+                labels: [{% for payment in payment_stats %}"{{ payment.name }}",{% endfor %}],
+                datasets: [{
+                    data: [{% for payment in payment_stats %}{{ payment.total_amount|default:0 }},{% endfor %}],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.5)',
+                        'rgba(54, 162, 235, 0.5)',
+                        'rgba(255, 206, 86, 0.5)',
+                        'rgba(75, 192, 192, 0.5)'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+    });
+</script>
+{% endblock %}

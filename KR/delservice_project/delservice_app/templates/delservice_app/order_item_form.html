@@ -1,0 +1,42 @@
+{% extends 'delservice_app/base.html' %}
+
+{% block title %}Добавление товара{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2">Добавление товара к заказу №{{ order.id }}</h1>
+    <a href="{% url 'delservice_app:order_detail' order.id %}" class="btn btn-secondary">
+        ← Назад к заказу
+    </a>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header bg-light">
+        <h5 class="mb-0">Выберите товар</h5>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="mb-3">
+                <label class="form-label">Товар</label>
+                <select name="product" class="form-select" required>
+                    <option value="">Выберите товар</option>
+                    {% for product in products %}
+                    <option value="{{ product.id }}">{{ product.name }} - {{ product.price }} ₽</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Количество</label>
+                <input type="number" name="quantity" class="form-control" value="1" min="1" required>
+            </div>
+            
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary">Добавить в заказ</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

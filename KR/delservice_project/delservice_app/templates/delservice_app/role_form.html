@@ -1,0 +1,51 @@
+{% extends 'delservice_app/base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2">{{ title }}</h1>
+    <a href="{% url 'delservice_app:role_list' %}" class="btn btn-secondary">
+        ← Назад к списку ролей
+    </a>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header bg-light">
+        <h5 class="mb-0">Форма роли</h5>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            
+            {% if form.errors %}
+            <div class="alert alert-danger">
+                <strong>Ошибка:</strong> Проверьте правильность заполнения формы
+            </div>
+            {% endif %}
+            
+            <div class="row g-3">
+                <!-- Название -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="id_name" class="form-label">Название</label>
+                        {{ form.name }}
+                    </div>
+                </div>
+                
+                <!-- Описание -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="id_description" class="form-label">Описание</label>
+                        {{ form.description }}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary">Сохранить</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends 'delservice_app/base.html' %}
+
+{% block title %}Список клиентов{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2">👤 Список клиентов</h1>
+    <a href="{% url 'delservice_app:order_create' %}" class="btn btn-success">
+        ✚ Создать заказ
+    </a>
+</div>
+
+<!-- Форма поиска -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="d-flex">
+            <input type="text" name="search" class="form-control me-2" 
+                   placeholder="Поиск по ФИО, email или телефону" 
+                   value="{{ search|default:'' }}">
+            <button type="submit" class="btn btn-primary">Поиск</button>
+        </form>
+    </div>
+</div>
+
+<!-- Список клиентов -->
+<div class="table-responsive">
+    <table class="table table-hover table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>ФИО</th>
+                <th>Email</th>
+                <th>Телефон</th>
+                <th>Дата регистрации</th>
+                <th>Статус</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for client in clients %}
+            <tr>
+                <td>{{ client.id }}</td>
+                <td>{{ client.full_name }}</td>
+                <td>{{ client.email }}</td>
+                <td>{{ client.phone }}</td>
+                <td>{{ client.registration_date|date:"d.m.Y H:i" }}</td>
+                <td>
+                    <span class="badge bg-{{ client.status|default:'secondary' }}-{{ client.status|default:'secondary' }}">
+                        {{ client.status|default:'активен' }}
+                    </span>
+                </td>
+                <td>
+                    <a href="{% url 'delservice_app:order_create' %}?client={{ client.id }}" class="btn btn-sm btn-primary">
+                        📦 Новый заказ
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" class="text-center text-muted">Клиенты не найдены</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

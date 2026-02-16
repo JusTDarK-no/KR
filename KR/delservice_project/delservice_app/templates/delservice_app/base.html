@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Служба доставки{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .sidebar { height: 100vh; position: fixed; }
+        .main-content { margin-left: 280px; padding: 20px; }
+        .status-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+        }
+        .status-created { background-color: #17a2b8; color: white; }
+        .status-confirmed { background-color: #007bff; color: white; }
+        .status-assigned { background-color: #ffc107; color: #212529; }
+        .status-in_progress { background-color: #fd7e14; color: white; }
+        .status-delivered { background-color: #28a745; color: white; }
+        .status-cancelled { background-color: #dc3545; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Боковое меню -->
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar bg-light">
+                <div class="position-sticky pt-3">
+                    <!-- Информация о пользователе -->
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h6 class="card-title mb-1">
+                                <i class="bi bi-person-circle"></i> {{ user.full_name|default:user.username }}
+                            </h6>
+                            <p class="card-text small text-muted mb-2">
+                                {{ user.role.name|default:"Пользователь" }}
+                            </p>
+                            <a href="{% url 'logout' %}" class="btn btn-outline-danger btn-sm w-100">
+                                🔙 Выйти
+                            </a>
+                        </div>
+                    </div>
+
+                    <h6 class="sidebar-heading px-3 mt-2 mb-1 text-muted">Основное меню</h6>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'delservice_app:dashboard' %}">
+                                📊 Панель управления
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if '/orders/' in request.path %}active{% endif %}" href="{% url 'delservice_app:order_list' %}">
+                                📦 Заказы
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if '/clients/' in request.path %}active{% endif %}" href="{% url 'delservice_app:client_list' %}">
+                                👤 Клиенты
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if '/reports/' in request.path %}active{% endif %}" href="{% url 'delservice_app:reports' %}">
+                                📈 Отчёты
+                            </a>
+                        </li>
+                    </ul>
+
+                    <h6 class="sidebar-heading px-3 mt-4 mb-1 text-muted">Справочники</h6>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link {% if '/users/' in request.path %}active{% endif %}" href="{% url 'delservice_app:user_list' %}">
+                                👥 Сотрудники
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if '/roles/' in request.path %}active{% endif %}" href="{% url 'delservice_app:role_list' %}">
+                                🎭 Роли
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if '/products/' in request.path %}active{% endif %}" href="{% url 'delservice_app:product_list' %}">
+                                🛒 Товары
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if '/addresses/' in request.path %}active{% endif %}" href="{% url 'delservice_app:address_list' %}">
+                                📍 Адреса
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if '/order-statuses/' in request.path %}active{% endif %}" href="{% url 'delservice_app:order_status_list' %}">
+                                📋 Статусы заказов
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if '/payment-methods/' in request.path %}active{% endif %}" href="{% url 'delservice_app:payment_method_list' %}">
+                                💳 Способы оплаты
+                            </a>
+                        </li>
+                    </ul>
+
+                    <hr>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'admin:index' %}" target="_blank">
+                                ⚙️ Администрирование
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Основной контент -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+                {% if messages %}
+                <div class="mb-3">
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

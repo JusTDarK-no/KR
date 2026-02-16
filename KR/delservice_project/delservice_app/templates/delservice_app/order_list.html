@@ -1,0 +1,136 @@
+{% extends 'delservice_app/base.html' %}
+
+{% block title %}Список заказов{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2">📦 Список заказов</h1>
+    <a href="{% url 'delservice_app:order_create' %}" class="btn btn-success">
+        ✚ Создать заказ
+    </a>
+</div>
+
+<!-- Форма фильтрации -->
+<div class="card mb-4">
+    <div class="card-header bg-light">
+        <h5 class="mb-0">🔍 Фильтры</h5>
+    </div>
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label">Клиент</label>
+                <input type="text" name="client_name" class="form-control"
+                       value="{{ form.client_name.value|default:'' }}" placeholder="Поиск по ФИО или телефону">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Статус</label>
+                <select name="status" class="form-select">
+                    <option value="">Все</option>
+                    {% for choice in form.status.field.choices %}
+                        <option value="{{ choice.0 }}" {% if form.status.value == choice.0 %}selected{% endif %}>
+                            {{ choice.1 }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Дата от</label>
+                <input type="date" name="date_from" class="form-control"
+                       value="{{ form.date_from.value|default:'' }}">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Дата до</label>
+                <input type="date" name="date_to" class="form-control"
+                       value="{{ form.date_to.value|default:'' }}">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Курьер ID</label>
+                <input type="number" name="courier" class="form-control"
+                       value="{{ form.courier.value|default:'' }}" placeholder="ID">
+            </div>
+            <div class="col-md-1 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">Применить</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Таблица заказов -->
+<div class="table-responsive">
+    <table class="table table-hover table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Клиент</th>
+                <th>Адрес</th>
+                <th>Курьер</th>
+                <th>Статус</th>
+                <th>Стоимость</th>
+                <th>Дата создания</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td>{{ order.id }}</td>
+                <td>{{ order.client.full_name }}<br><small>{{ order.client.phone }}</small></td>
+                <td>{{ order.delivery_address.street }}, {{ order.delivery_address.house_number }}</td>
+                <td>{{ order.courier.full_name|default:"Не назначен" }}</td>
+                <td>
+                    <span class="status-badge status-{{ order.status.code|lower }}">
+                        {{ order.status.name }}
+                    </span>
+                </td>
+                <td>{{ order.delivery_cost }} ₽</td>
+                <td>{{ order.created_at|date:"d.m.Y H:i" }}</td>
+                <td>
+                    <a href="{% url 'delservice_app:order_detail' order.id %}" class="btn btn-sm btn-primary">
+                        👁️
+                    </a>
+                    <a href="{% url 'delservice_app:order_update' order.id %}" class="btn btn-sm btn-warning">
+                        ✏️
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="8" class="text-center text-muted">Нет заказов</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Пагинация -->
+{% if page_obj.has_other_pages %}
+<nav>
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Предыдущая</a>
+            </li>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+                <li class="page-item active">
+                    <span class="page-link">{{ num }}</span>
+                </li>
+            {% elif num > page_obj.number|add:-3 and num < page_obj.number|add:3 %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a>
+                </li>
+            {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Следующая</a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+
+{% endblock %}

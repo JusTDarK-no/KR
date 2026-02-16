@@ -1,0 +1,101 @@
+{% extends 'delservice_app/base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2">{{ title }}</h1>
+    <a href="{% url 'delservice_app:address_list' %}" class="btn btn-secondary">
+        ← Назад к списку адресов
+    </a>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header bg-light">
+        <h5 class="mb-0">Форма адреса</h5>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            
+            {% if form.errors %}
+            <div class="alert alert-danger">
+                <strong>Ошибка:</strong> Проверьте правильность заполнения формы
+            </div>
+            {% endif %}
+            
+            <div class="row g-3">
+                <!-- Улица -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="id_street" class="form-label">Улица</label>
+                        {{ form.street }}
+                    </div>
+                </div>
+                
+                <!-- Номер дома -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="id_house_number" class="form-label">Номер дома</label>
+                        {{ form.house_number }}
+                    </div>
+                </div>
+                
+                <!-- Номер квартиры -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="id_apartment_number" class="form-label">Номер квартиры</label>
+                        {{ form.apartment_number }}
+                    </div>
+                </div>
+                
+                <!-- Подъезд -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="id_entrance" class="form-label">Подъезд</label>
+                        {{ form.entrance }}
+                    </div>
+                </div>
+                
+                <!-- Этаж -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="id_floor" class="form-label">Этаж</label>
+                        {{ form.floor }}
+                    </div>
+                </div>
+                
+                <!-- Код домофона -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="id_door_code" class="form-label">Код домофона</label>
+                        {{ form.door_code }}
+                    </div>
+                </div>
+                
+                <!-- Широта -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="id_latitude" class="form-label">Широта</label>
+                        {{ form.latitude }}
+                        <small class="form-text text-muted">Для расчёта маршрутов</small>
+                    </div>
+                </div>
+                
+                <!-- Долгота -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="id_longitude" class="form-label">Долгота</label>
+                        {{ form.longitude }}
+                        <small class="form-text text-muted">Для расчёта маршрутов</small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary">Сохранить</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends 'delservice_app/base.html' %}
+
+{% block title %}Выход из системы{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center align-items-center" style="height: 80vh;">
+    <div class="card" style="width: 30rem;">
+        <div class="card-header bg-danger text-white">
+            <h5 class="mb-0">Выход из системы</h5>
+        </div>
+        <div class="card-body text-center">
+            <p class="card-text">Вы уверены, что хотите выйти из системы?</p>
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Выйти</button>
+                <a href="{% url 'delservice_app:dashboard' %}" class="btn btn-secondary">Отмена</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

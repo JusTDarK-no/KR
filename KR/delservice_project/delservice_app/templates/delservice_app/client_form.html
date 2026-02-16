@@ -1,0 +1,67 @@
+{% extends 'delservice_app/base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2">{{ title }}</h1>
+    <a href="{% url 'delservice_app:client_list' %}" class="btn btn-secondary">
+        ← Назад к списку клиентов
+    </a>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header bg-light">
+        <h5 class="mb-0">Форма клиента</h5>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            
+            {% if form.errors %}
+            <div class="alert alert-danger">
+                <strong>Ошибка:</strong> Проверьте правильность заполнения формы
+            </div>
+            {% endif %}
+            
+            <div class="row g-3">
+                <!-- ФИО -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="id_full_name" class="form-label">ФИО</label>
+                        {{ form.full_name }}
+                    </div>
+                </div>
+                
+                <!-- Email -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="id_email" class="form-label">Email</label>
+                        {{ form.email }}
+                    </div>
+                </div>
+                
+                <!-- Телефон -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="id_phone" class="form-label">Телефон</label>
+                        {{ form.phone }}
+                    </div>
+                </div>
+                
+                <!-- Статус -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="id_status" class="form-label">Статус</label>
+                        {{ form.status }}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary">Сохранить</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends 'delservice_app/base.html' %}
+
+{% block title %}Список пользователей{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2">👥 Список сотрудников</h1>
+    <a href="{% url 'delservice_app:user_create' %}" class="btn btn-success">
+        ✚ Создать пользователя
+    </a>
+</div>
+
+<!-- Форма поиска -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="d-flex">
+            <input type="text" name="search" class="form-control me-2" 
+                   placeholder="Поиск по ФИО, логину или телефону" 
+                   value="{{ search|default:'' }}">
+            <button type="submit" class="btn btn-primary">Поиск</button>
+        </form>
+    </div>
+</div>
+
+<!-- Таблица пользователей -->
+<div class="table-responsive">
+    <table class="table table-hover table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>ФИО</th>
+                <th>Роль</th>
+                <th>Логин</th>
+                <th>Телефон</th>
+                <th>Статус</th>
+                <th>Дата найма</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.full_name }}</td>
+                <td>{{ user.role.name }}</td>
+                <td>{{ user.login }}</td>
+                <td>{{ user.phone }}</td>
+                <td>
+                    <span class="badge bg-secondary text-dark">
+                        {{ user.status }}
+                    </span>
+                </td>
+                <td>{{ user.hire_date|date:"d.m.Y" }}</td>
+                <td>
+                    <a href="{% url 'delservice_app:user_update' user.id %}" class="btn btn-sm btn-warning">
+                        ✏️
+                    </a>
+                    <a href="{% url 'delservice_app:user_delete' user.id %}" class="btn btn-sm btn-danger">
+                        ❌
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="8" class="text-center text-muted">Пользователи не найдены</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
